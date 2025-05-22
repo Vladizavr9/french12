@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Учебный материал</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .block {
+      width: 95%;
+      max-width: 600px;
+      padding: 5px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+      border-left: none;
+      border-right: none;
+      box-sizing: border-box;
+      position: relative;
+      margin-bottom: 20px;
+      overflow: hidden;
+      color: #333;
+      background-size: cover;
+      min-height: 60px;
+    }
+    h2 {
+      font-size: 1.6em;
+      margin: 5px 5px 10px;
+      color: #000;
+      text-align: center;
+      cursor: pointer;
+    }
+    .small-textarea {
+      width: calc(100% - 20px);
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.88em;
+      box-sizing: border-box;
+      resize: vertical;
+      min-height: 30px;
+      overflow: hidden;
+      background-color: #fff;
+      color: #000;
+      display: block;
+      font-style: italic;
+      margin: 0 auto 10px;
+      text-align: left;
+    }
+    .text-splitter {
+      position: relative;
+      width: calc(100% - 20px);
+      height: 200px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      overflow: hidden;
+      background: white;
+      margin: 0 auto;
+      resize: vertical;
+      min-height: 0;
+      transition: height 0.3s ease;
+    }
+    .collapsed {
+      height: 0 !important;
+      min-height: 0 !important;
+      border: none !important;
+      overflow: hidden !important;
+    }
+    .text-part {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      overflow-y: auto;
+      padding: 10px;
+      box-sizing: border-box;
+      text-align: left;
+      font-size: 0.8em;
+      white-space: pre-wrap;
+    }
+    .text-left {
+      left: 0;
+      right: 50%;
+      border-right: 1px solid #ccc;
+    }
+    .text-right {
+      left: 50%;
+      right: 0;
+      font-weight: bold;
+    }
+    .split-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      left: 50%;
+      margin-left: -2px;
+      cursor: col-resize;
+      z-index: 10;
+      background: inherit;
+      opacity: 0.7;
+    }
+    .split-handle:hover {
+      opacity: 1;
+    }
+    .expand-button-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin-top: 5px;
+    }
+    .expand-button, .ru-button, .confirm-button {
+      background-color: transparent;
+      border: none;
+      font-size: 0.75em;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    .expand-button, .ru-button {
+      color: rgba(76, 175, 80, 0.5);
+    }
+    .confirm-button {
+      color: rgba(255, 193, 7, 0.8);
+    }
+    .expand-button:hover, .ru-button:hover {
+      color: rgba(62, 142, 65, 0.8);
+    }
+    .confirm-button:hover {
+      color: rgba(255, 193, 7, 1);
+    }
+    /* Стили для анимированного смайлика */
+    .emoji-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .emoji-display {
+      font-size: 100px;
+      opacity: 0;
+      transform: scale(0.5);
+      animation: emojiAnimation 1.5s ease-out;
+    }
+    @keyframes emojiAnimation {
+      0% { opacity: 0; transform: scale(0.5); }
+      20% { opacity: 1; transform: scale(1.5); }
+      50% { opacity: 1; transform: scale(1.5); }
+      100% { opacity: 0; transform: scale(0.5); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Единственный блок -->
+    <div class="block" id="vocabularyBlock1">
+      <h2 data-target="textSplitter1">C'est qui ?</h2>
+      <textarea class="small-textarea" id="vocabularySmallInput1" rows="1" data-lang="fr">
+A) C'est qui ?
+B) C’est Claire, mon amie.
+A) Elle est américaine ?
+B) Non, elle est espagnole.
+A) D’accord. Elle aime le cinéma ?
+B) Mais non! Elle aime la peinture et la photo.
+
+C) C’est qui ?
+F) Ce sont Paul et Jacques, mes amis.
+C) Ils sont ukrainiens ?
+F) Non, ils sont allemands.
+C) D’accord. Ils aiment la technologie ?
+F) Oui, ils aiment aussi le sport et les voyages.
+      </textarea>
+      <div class="text-splitter" id="textSplitter1">
+        <div class="text-part text-left" id="textLeft1" data-lang="fr">
+1) Claire:
+🚫 américaine
+✅ espagnole
+🚫 le cinéma
+✅ la peinture, la photo
+
+2) Paul et Jacques:
+🚫 ukrainiens
+✅ allemands
+✅ la technologie
+✅ le sport, les voyages
+
+3) Léa:  
+🚫 française  
+✅ italienne  
+🚫 la musique  
+✅ la danse, le théâtre  
+
+4) Thomas:  
+🚫 canadien  
+✅ belge  
+✅ les jeux vidéo  
+✅ la lecture, les animaux  
+
+5) Amélie et Zoé:  
+🚫 anglaises  
+✅ françaises  
+🚫 le foot  
+✅ la cuisine, le jardinage  
+
+6) Hugo:  
+🚫 japonais  
+✅ coréen  
+✅ le dessin  
+✅ l’informatique, les mangas  
+
+7) Nina:  
+🚫 russe  
+✅ chinoise  
+🚫 le sport  
+✅ la mode, les langues  
+
+8) Lucas et Mathieu:  
+🚫 brésiliens  
+✅ suisses  
+✅ le cinéma  
+✅ la musique, la nature  
+
+9) Camille:  
+🚫 allemande  
+✅ portugaise  
+✅ la photo  
+✅ les chats, les promenades  
+
+10) Sarah:  
+🚫 espagnole  
+✅ américaine  
+✅ les chiens  
+✅ la pâtisserie, les séries TV  
+
+11) Yann et Loïc:  
+🚫 français  
+✅ canadiens  
+✅ le hockey  
+✅ les jeux de société, la bière  
+
+12) Emma:  
+🚫 japonaise  
+✅ italienne  
+🚫 le camping  
+✅ la peinture, le yoga  
+
+13) David:  
+🚫 marocain  
+✅ israélien  
+✅ le basket  
+✅ la programmation, les drones  
+
+14) Élodie:  
+🚫 australienne  
+✅ mexicaine  
+✅ le chant  
+✅ les plantes, les chats  
+
+15) Clara et Marion:  
+🚫 ukrainiennes  
+✅ polonaises  
+✅ la danse  
+✅ les livres, les cafés  
+
+16) Bastien:  
+🚫 indien  
+✅ néerlandais  
+✅ le surf  
+✅ la technologie, les voitures  
+
+17) Manon:  
+🚫 turque  
+✅ grecque  
+🚫 les maths  
+✅ le dessin, les fleurs  
+
+18) Julien:  
+🚫 vietnamien  
+✅ russe  
+✅ le vélo  
+✅ la philosophie, les documentaires  
+
+19) Inès:  
+🚫 allemande  
+✅ tunisienne  
+✅ la cuisine  
+✅ les réseaux sociaux, le shopping  
+
+20) Samir et Karim:  
+🚫 anglais  
+✅ algériens  
+✅ le rap  
+✅ la politique, l’histoire
+        </div>
+        <div class="split-handle" id="splitHandle1"></div>
+        <div class="text-part text-right" id="textRight1"></div>
+      </div>
+      <div class="expand-button-container">
+        <button class="expand-button" data-target="textSplitter1">↕️</button>
+        <button class="ru-button" data-target="textLeft1">🔄</button>
+        <button class="confirm-button" data-block="1">✅</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const emojis = ['👍', '💯', '👌', '👏', '😎', '🏆','🤟'];
+
+      // Русский перевод
+      const ruText = `1) Клэр:\n🚫 американка\n✅ испанка\n🚫 кино\n✅ живопись, фотография\n\n2) Пол и Жак:\n🚫 украинцы\n✅ немцы\n✅ технологии\n✅ спорт, путешествия\n\n3) Леа:\n🚫 француженка\n✅ итальянка\n🚫 музыка\n✅ танцы, театр\n\n4) Томас:\n🚫 канадец\n✅ бельгиец\n✅ видеоигры\n✅ чтение, животные\n\n5) Амели и Зоэ:\n🚫 англичанки\n✅ француженки\n🚫 футбол\n✅ кулинария, садоводство\n\n6) Уго:\n🚫 японец\n✅ кореец\n✅ рисование\n✅ информатика, манга\n\n7) Нина:\n🚫 русская\n✅ китаянка\n🚫 спорт\n✅ мода, языки\n\n8) Лукас и Матьё:\n🚫 бразильцы\n✅ швейцарцы\n✅ кино\n✅ музыка, природа\n\n9) Камиль:\n🚫 немка\n✅ португалка\n✅ фотография\n✅ кошки, прогулки\n\n10) Сара:\n🚫 испанка\n✅ американская\n✅ собаки\n✅ выпечка, сериалы\n\n11) Янн и Лоик:\n🚫 французы\n✅ канадцы\n✅ хоккей\n✅ настольные игры, пиво\n\n12) Эмма:\n🚫 японка\n✅ итальянка\n🚫 кемпинг\n✅ живопись, йога\n\n13) Давид:\n🚫 марокканец\n✅ израильтянин\n✅ баскетбол\n✅ программирование, дроны\n\n14) Элоди:\n🚫 австралийка\n✅ мексиканка\n✅ пение\n✅ растения, кошки\n\n15) Клара и Марион:\n🚫 украинки\n✅ полячки\n✅ танцы\n✅ книги, кафе\n\n16) Бастен:\n🚫 индиец\n✅ голландец\n✅ серфинг\n✅ технологии, автомобили\n\n17) Манон:\n🚫 турчанка\n✅ гречанка\n🚫 математика\n✅ рисование, цветы\n\n18) Жюльен:\n🚫 вьетнамец\n✅ русский\n✅ велосипед\n✅ философия, документальное кино\n\n19) Инесс:\n🚫 немка\n✅ тунсийка\n✅ кулинария\n✅ соцсети, шоппинг\n\n20) Самир и Каим:\n🚫 англичане\n✅ алжирцы\n✅ рэп\n✅ политика, история`;
+
+      function getRandomGradient() {
+        const hue1 = Math.floor(Math.random() * 360);
+        const hue2 = (hue1 + 30 + Math.floor(Math.random() * 100)) % 360;
+        const saturation = 60 + Math.floor(Math.random() * 30);
+        const lightness1 = 80 + Math.floor(Math.random() * 15);
+        const lightness2 = 85 + Math.floor(Math.random() * 10);
+        return `linear-gradient(135deg, 
+            hsl(${hue1}, ${saturation}%, ${lightness1}%),
+            hsl(${hue2}, ${saturation}%, ${lightness2}%))`;
+      }
+
+      const block = document.getElementById("vocabularyBlock1");
+      const textLeft = document.getElementById("textLeft1");
+
+      // Применяем случайный градиент
+      block.style.backgroundImage = getRandomGradient();
+      document.getElementById("splitHandle1").style.background = block.style.backgroundImage;
+
+      // Перевод по клику
+      document.querySelector(".ru-button").addEventListener("click", () => {
+        if (textLeft.dataset.lang === "fr") {
+          textLeft.textContent = ruText;
+          textLeft.dataset.lang = "ru";
+        } else {
+          textLeft.textContent = `1) Claire:\n🚫 américaine\n✅ espagnole\n🚫 le cinéma\n✅ la peinture, la photo\n\n2) Paul et Jacques:\n🚫 ukrainiens\n✅ allemands\n✅ la technologie\n✅ le sport, les voyages\n\n3) Léa:  \n🚫 française  \n✅ italienne  \n🚫 la musique  \n✅ la danse, le théâtre  \n\n4) Thomas:  \n🚫 canadien  \n✅ belge  \n✅ les jeux vidéo  \n✅ la lecture, les animaux  \n\n5) Amélie et Zoé:  \n🚫 anglaises  \n✅ françaises  \n🚫 le foot  \n✅ la cuisine, le jardinage  \n\n6) Hugo:  \n🚫 japonais  \n✅ coréen  \n✅ le dessin  \n✅ l’informatique, les mangas  \n\n7) Nina:  \n🚫 russe  \n✅ chinoise  \n🚫 le sport  \n✅ la mode, les langues  \n\n8) Lucas et Mathieu:  \n🚫 brésiliens  \n✅ suisses  \n✅ le cinéma  \n✅ la musique, la nature  \n\n9) Camille:  \n🚫 allemande  \n✅ portugaise  \n✅ la photo  \n✅ les chats, les promenades  \n\n10) Sarah:  \n🚫 espagnole  \n✅ américaine  \n✅ les chiens  \n✅ la pâtisserie, les séries TV  \n\n11) Yann et Loïc:  \n🚫 français  \n✅ canadiens  \n✅ le hockey  \n✅ les jeux de société, la bière  \n\n12) Emma:  \n🚫 japonaise  \n✅ italienne  \n🚫 le camping  \n✅ la peinture, le yoga  \n\n13) David:  \n🚫 marocain  \n✅ israélien  \n✅ le basket  \n✅ la programmation, les drones  \n\n14) Élodie:  \n🚫 australienne  \n✅ mexicaine  \n✅ le chant  \n✅ les plantes, les chats  \n\n15) Clara et Marion:  \n🚫 ukrainiennes  \n✅ polonaises  \n✅ la danse  \n✅ les livres, les cafés  \n\n16) Bastien:  \n🚫 indien  \n✅ néerlandais  \n✅ le surf  \n✅ la technologie, les voitures  \n\n17) Manon:  \n🚫 turque  \n✅ grecque  \n🚫 les maths  \n✅ le dessin, les fleurs  \n\n18) Julien:  \n🚫 vietnamien  \n✅ russe  \n✅ le vélo  \n✅ la philosophie, les documentaires  \n\n19) Inès:  \n🚫 allemande  \n✅ tunisienne  \n✅ la cuisine  \n✅ les réseaux sociaux, le shopping  \n\n20) Samir et Karim:  \n🚫 anglais  \n✅ algériens  \n✅ le rap  \n✅ la politique, l’histoire`;
+          textLeft.dataset.lang = "fr";
+        }
+      });
+
+      // Обработчики для кнопок подтверждения
+      document.querySelectorAll('.confirm-button').forEach(button => {
+        button.addEventListener('click', () => showRandomEmoji());
+      });
+
+      function showRandomEmoji() {
+        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+        const overlay = document.createElement('div');
+        overlay.className = 'emoji-overlay';
+        const emojiDisplay = document.createElement('div');
+        emojiDisplay.className = 'emoji-display';
+        emojiDisplay.textContent = randomEmoji;
+        overlay.appendChild(emojiDisplay);
+        document.body.appendChild(overlay);
+        setTimeout(() => overlay.remove(), 1500);
+      }
+
+      // Функция сворачивания/разворачивания
+      function toggleCollapse(target, button) {
+        if (target.classList.contains('collapsed')) {
+          target.classList.remove('collapsed');
+          target.style.height = '200px';
+          button.textContent = '↕️';
+        } else {
+          target.classList.add('collapsed');
+          target.style.height = '0';
+          button.textContent = '↕️';
+        }
+      }
+
+      document.querySelectorAll('.expand-button').forEach(button => {
+        button.addEventListener('click', e => {
+          const target = document.getElementById(e.target.dataset.target);
+          toggleCollapse(target, e.target);
+        });
+      });
+
+      document.querySelectorAll('h2[data-target]').forEach(header => {
+        header.addEventListener('click', e => {
+          const target = document.getElementById(e.target.dataset.target);
+          const btn = e.target.closest('.block').querySelector('.expand-button');
+          toggleCollapse(target, btn);
+        });
+      });
+
+      // Автоувеличение textarea
+      const smallInput = document.getElementById("vocabularySmallInput1");
+      smallInput.addEventListener('input', function () {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+      });
+
+      // Разделитель колонок
+      let isDragging = false, startX, startWidth;
+      const handle = document.getElementById("splitHandle1");
+      const splitter = document.getElementById("textSplitter1");
+      const left = document.getElementById("textLeft1");
+      const right = document.getElementById("textRight1");
+
+      left.contentEditable = right.contentEditable = true;
+      right.style.fontWeight = 'bold';
+
+      handle.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startWidth = left.offsetWidth;
+        document.body.style.cursor = 'col-resize';
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        let newLeftWidth = startWidth + dx;
+        const minWidth = 50;
+        const maxWidth = splitter.offsetWidth - minWidth - 5;
+        newLeftWidth = Math.max(minWidth, Math.min(maxWidth, newLeftWidth));
+        left.style.right = (splitter.offsetWidth - newLeftWidth) + 'px';
+        right.style.left = (newLeftWidth + 5) + 'px';
+        handle.style.left = newLeftWidth + 'px';
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+        document.body.style.cursor = '';
+      });
+    });
+  </script>
+</body>
+</html>
